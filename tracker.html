@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheval School — Weekly Tracker</title>
+<style>
+  /* ============================================================
+     TYPESETTER DESIGN SYSTEM — do not restyle, only fill content.
+     Palette: warm paper, dark ink, blueprint teal, workshop amber.
+     Type: serif body (reading), monospace utility (labels/code).
+     ============================================================ */
+  :root {
+    --paper: #F6F4EF;
+    --panel: #FFFFFF;
+    --ink: #1B2A30;
+    --ink-soft: #45585F;
+    --line: #DCD8CF;
+    --blueprint: #2C5D69;
+    --blueprint-deep: #1E4650;
+    --amber: #C6852E;
+    --accent-a: #B5562E;   /* rust   — first parallel thing  */
+    --accent-b: #2C5D69;   /* teal   — second parallel thing */
+    --accent-c: #6A6438;   /* olive  — third parallel thing  */
+    --code-bg: #1B2A30;
+    --code-ink: #D9E4E2;
+    --shadow: 0 1px 2px rgba(27,42,48,.06), 0 8px 28px rgba(27,42,48,.07);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 12% -5%, rgba(44,93,105,.06), transparent 42%),
+      radial-gradient(circle at 98% 8%, rgba(198,133,46,.05), transparent 40%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 28px; }
+
+  .mono {
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+  }
+
+  /* ---------- Masthead ---------- */
+  header.mast { padding: 74px 0 40px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--blueprint); margin: 0 0 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--blueprint); display: inline-block; }
+  h1 {
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.08; letter-spacing: -.012em;
+    margin: 0 0 22px; font-weight: 600;
+  }
+  h1 em { font-style: italic; color: var(--accent-a); }
+  .standfirst { font-size: 20px; color: var(--ink-soft); margin: 0; max-width: 60ch; }
+
+  /* ---------- Thesis panel (exactly one per document) ---------- */
+  .thesis {
+    margin: 44px 0; padding: 30px 32px;
+    background: var(--blueprint-deep); color: #EAF1F0;
+    border-radius: 14px; box-shadow: var(--shadow);
+  }
+  .thesis .label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    color: #9CC2C0; margin: 0 0 12px;
+  }
+  .thesis p { margin: 0; font-size: 21px; line-height: 1.5; }
+  .thesis b { color: #F1C88A; font-weight: 600; }
+
+  /* ---------- Section rhythm ---------- */
+  section { padding: 46px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 27px; letter-spacing: -.01em; margin: 0 0 8px; font-weight: 600; }
+  .kicker {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--amber); margin: 0 0 18px;
+  }
+  p { margin: 0 0 18px; }
+  p:last-child { margin-bottom: 0; }
+  .lead-in { color: var(--ink-soft); }
+  strong { font-weight: 600; }
+
+  /* ---------- Analogy pull (italic, amber spine) ---------- */
+  .analogy {
+    border-left: 3px solid var(--amber);
+    padding: 4px 0 4px 20px; margin: 22px 0;
+    color: var(--ink-soft); font-style: italic;
+  }
+
+  /* ---------- Cards: 2-4 parallel things, each with a color spine ---------- */
+  .cards { display: grid; gap: 18px; margin-top: 8px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 26px 28px;
+    box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .card.a::before { background: var(--accent-a); }
+  .card.b::before { background: var(--accent-b); }
+  .card.c::before { background: var(--accent-c); }
+
+  .card-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+  .card-chip {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 15px; font-weight: 600;
+    padding: 3px 10px; border-radius: 7px;
+    background: #EFEAE0; color: var(--ink);
+  }
+  .card.a .card-chip { background: #F6E2D8; color: #8A3E1F; }
+  .card.b .card-chip { background: #DBE8E9; color: #1E4650; }
+  .card.c .card-chip { background: #E8E7D3; color: #4E4A26; }
+  .card-name { font-size: 19px; font-weight: 600; }
+  .card-role {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-soft); margin-left: auto;
+  }
+  .card p { font-size: 16.5px; margin: 12px 0 0; }
+  .card .job { margin-top: 14px; font-size: 15px; color: var(--ink-soft); }
+  .card .job b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Numbered flow (true sequences only) ---------- */
+  .flow { counter-reset: step; margin-top: 12px; }
+  .step {
+    display: grid; grid-template-columns: 52px 1fr; gap: 22px;
+    padding: 22px 0; border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: none; }
+  .step .num {
+    counter-increment: step;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 15px; font-weight: 600; color: var(--blueprint);
+  }
+  .step .num::before { content: counter(step, decimal-leading-zero); }
+  .step h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+  .step p { margin: 0; font-size: 16px; color: var(--ink-soft); }
+  .step .who {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--blueprint); margin-top: 8px;
+  }
+
+  /* ---------- Code / verbatim snippet ---------- */
+  .snippet {
+    background: var(--code-bg); color: var(--code-ink);
+    border-radius: 12px; padding: 20px 22px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 13.5px; line-height: 1.7;
+    overflow-x: auto; margin: 22px 0; box-shadow: var(--shadow);
+  }
+  .snippet .c { color: #7FA6A2; }  /* comment */
+  .snippet .k { color: #F1C88A; }  /* key/label */
+
+  /* ---------- Name + description rows ---------- */
+  .rows { margin-top: 10px; }
+  .row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 18px;
+    padding: 14px 0; border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .row:first-child { border-top: none; }
+  .row-name {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 14px; font-weight: 600; color: var(--blueprint-deep);
+  }
+  .row-desc { font-size: 15.5px; color: var(--ink-soft); }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ---------- Callout (max one per section) ---------- */
+  .callout {
+    background: #FBF7EE; border: 1px solid #ECDFC4;
+    border-radius: 12px; padding: 22px 24px; margin: 26px 0 0;
+  }
+  .callout .tag {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent-a); margin: 0 0 8px;
+  }
+  .callout p { margin: 0; font-size: 16px; }
+
+  /* ---------- Footer close ---------- */
+  footer { padding: 50px 0 80px; text-align: center; color: var(--ink-soft); }
+  footer .mark {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--blueprint);
+  }
+  footer p { margin: 14px 0 0; font-size: 16px; }
+
+  /* ---------- Motion (respects reduced-motion) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    section, header.mast > *, .thesis { animation: rise .6s ease both; }
+    section:nth-child(2){animation-delay:.04s}
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <p class="eyebrow">Cheval School · print this</p>
+    <h1>Friday 4pm is the <em>bell</em>.</h1>
+    <p class="standfirst">Check boxes in ink. Miss Friday, repeat the week. Do not stack four lessons on a Sunday and call it caught up.</p>
+  </header>
+  <div class="thesis">
+    <p class="label">The whole idea in one line</p>
+    <p>Watching TAP is not class. <b>Shipping the Cheval artifact on Friday is class.</b></p>
+  </div>
+  <section>
+    <p class="kicker">Standing week</p>
+    <h2>Every week, same rhythm</h2>
+    <div class="rows">
+      <div class="row"><span class="row-name">Mon 7-8am</span><span class="row-desc">Watch this week's TAP lessons in the Kajabi app. Notes in the Cheval binder.</span></div>
+      <div class="row"><span class="row-name">Mon 9am</span><span class="row-desc">Submit the TAP discussion form if a live call is this week.</span></div>
+      <div class="row"><span class="row-name">Carmen</span><span class="row-desc">2nd Wednesday, 7pm ET. Required. Replay within 48 hours counts.</span></div>
+      <div class="row"><span class="row-name">Lab</span><span class="row-desc">One other TAP call per month: Jackie, Lizzie, Margot, Susan, or Heidi.</span></div>
+      <div class="row"><span class="row-name">Joey</span><span class="row-desc">20 minutes. Artifact on screen, not a feeling.</span></div>
+      <div class="row"><span class="row-name">Fri 4pm</span><span class="row-desc">Text Joey: DONE + photo, or STUCK + the one blocker.</span></div>
+    </div>
+  </section>
+  <section>
+    <p class="kicker">Walk-away</p>
+    <h2>Score in week 1. Update when a system actually moves.</h2>
+    <p class="lead-in">1 = breaks without you. <strong>5 = runs without you.</strong> Clinic #2 talk is banned until three items are 5.</p>
+    <div class="rows">
+      <div class="row"><span class="row-name">Phones</span><span class="row-desc">Mary + scripts. Answered without you.</span></div>
+      <div class="row"><span class="row-name">Pricing</span><span class="row-desc">Amanda holds it. No freestyle quotes.</span></div>
+      <div class="row"><span class="row-name">Money</span><span class="row-desc">Bank, invoices, card fees visible remotely.</span></div>
+      <div class="row"><span class="row-name">Leads</span><span class="row-desc">Tracked end to end. Book to show.</span></div>
+      <div class="row"><span class="row-name">Natalie</span><span class="row-desc">Posts without you approving every post.</span></div>
+      <div class="row"><span class="row-name">Billing</span><span class="row-desc">Healthy / billing runs without you in the rabbit hole.</span></div>
+      <div class="row"><span class="row-name">5 days</span><span class="row-desc">You can be unreachable. Surgery / week-off test.</span></div>
+    </div>
+  </section>
+  <section>
+    <p class="kicker">Twelve weeks</p>
+    <h2>What ships each Friday</h2>
+    <div class="flow">
+      <div class="step"><div class="num"></div><div><h3>Week 1 · Orientation</h3><p>Walk-away scored in ink. 30-second Cheval pitch said out loud. Posted in the TAP elevator-pitch challenge.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 2 · Stuck model</h3><p>Mini plan for the clinic that exists. Three owner-dependent loops named with owners.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 3 · Commitment</h3><p>Cheval rewritten as a 90-day yes, not a visit count.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 4 · Journey</h3><p>Map with names. Discovery offer with a price.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 5 · Offer anatomy</h3><p>Ugly three-tier draft. Complete, not pretty.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 6 · Price</h3><p>Numbers on paper. Amanda has it. Override log at zero.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 7 · Consult to close</h3><p>Script in the room. Amanda's hold-price week reviewed.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 8 · Integrity selling</h3><p>Clinical roadmap. Role-play notes.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 9 · Non-Angela close</h3><p>Discovery in the first-call script. Close attempt by someone else.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 10 · Membership model</h3><p>One model chosen. Why the other three lost.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 11 · Five offers</h3><p>One-pager. Five patients. Yes / no / objection log.</p></div></div>
+      <div class="step"><div class="num"></div><div><h3>Week 12 · Exam</h3><p>5-day roster. Dated walk-away. GO / PAUSE / NO-GO on Clinic #2.</p></div></div>
+    </div>
+  </section>
+  <footer>
+    <p class="mark">Print it. Hang it.</p>
+    <p>The library will still be there in June. The walk-away score will not move by itself.</p>
+  </footer>
+</div>
+
+</body>
+</html>

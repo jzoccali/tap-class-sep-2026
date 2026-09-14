@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheval School — Get Solid First</title>
+<style>
+  /* ============================================================
+     TYPESETTER DESIGN SYSTEM — do not restyle, only fill content.
+     Palette: warm paper, dark ink, blueprint teal, workshop amber.
+     Type: serif body (reading), monospace utility (labels/code).
+     ============================================================ */
+  :root {
+    --paper: #F6F4EF;
+    --panel: #FFFFFF;
+    --ink: #1B2A30;
+    --ink-soft: #45585F;
+    --line: #DCD8CF;
+    --blueprint: #2C5D69;
+    --blueprint-deep: #1E4650;
+    --amber: #C6852E;
+    --accent-a: #B5562E;   /* rust   — first parallel thing  */
+    --accent-b: #2C5D69;   /* teal   — second parallel thing */
+    --accent-c: #6A6438;   /* olive  — third parallel thing  */
+    --code-bg: #1B2A30;
+    --code-ink: #D9E4E2;
+    --shadow: 0 1px 2px rgba(27,42,48,.06), 0 8px 28px rgba(27,42,48,.07);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 12% -5%, rgba(44,93,105,.06), transparent 42%),
+      radial-gradient(circle at 98% 8%, rgba(198,133,46,.05), transparent 40%),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 28px; }
+
+  .mono {
+    font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+  }
+
+  /* ---------- Masthead ---------- */
+  header.mast { padding: 74px 0 40px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--blueprint); margin: 0 0 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--blueprint); display: inline-block; }
+  h1 {
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.08; letter-spacing: -.012em;
+    margin: 0 0 22px; font-weight: 600;
+  }
+  h1 em { font-style: italic; color: var(--accent-a); }
+  .standfirst { font-size: 20px; color: var(--ink-soft); margin: 0; max-width: 60ch; }
+
+  /* ---------- Thesis panel (exactly one per document) ---------- */
+  .thesis {
+    margin: 44px 0; padding: 30px 32px;
+    background: var(--blueprint-deep); color: #EAF1F0;
+    border-radius: 14px; box-shadow: var(--shadow);
+  }
+  .thesis .label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    color: #9CC2C0; margin: 0 0 12px;
+  }
+  .thesis p { margin: 0; font-size: 21px; line-height: 1.5; }
+  .thesis b { color: #F1C88A; font-weight: 600; }
+
+  /* ---------- Section rhythm ---------- */
+  section { padding: 46px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 27px; letter-spacing: -.01em; margin: 0 0 8px; font-weight: 600; }
+  .kicker {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--amber); margin: 0 0 18px;
+  }
+  p { margin: 0 0 18px; }
+  p:last-child { margin-bottom: 0; }
+  .lead-in { color: var(--ink-soft); }
+  strong { font-weight: 600; }
+
+  /* ---------- Analogy pull (italic, amber spine) ---------- */
+  .analogy {
+    border-left: 3px solid var(--amber);
+    padding: 4px 0 4px 20px; margin: 22px 0;
+    color: var(--ink-soft); font-style: italic;
+  }
+
+  /* ---------- Cards: 2-4 parallel things, each with a color spine ---------- */
+  .cards { display: grid; gap: 18px; margin-top: 8px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 26px 28px;
+    box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .card.a::before { background: var(--accent-a); }
+  .card.b::before { background: var(--accent-b); }
+  .card.c::before { background: var(--accent-c); }
+
+  .card-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+  .card-chip {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 15px; font-weight: 600;
+    padding: 3px 10px; border-radius: 7px;
+    background: #EFEAE0; color: var(--ink);
+  }
+  .card.a .card-chip { background: #F6E2D8; color: #8A3E1F; }
+  .card.b .card-chip { background: #DBE8E9; color: #1E4650; }
+  .card.c .card-chip { background: #E8E7D3; color: #4E4A26; }
+  .card-name { font-size: 19px; font-weight: 600; }
+  .card-role {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-soft); margin-left: auto;
+  }
+  .card p { font-size: 16.5px; margin: 12px 0 0; }
+  .card .job { margin-top: 14px; font-size: 15px; color: var(--ink-soft); }
+  .card .job b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Numbered flow (true sequences only) ---------- */
+  .flow { counter-reset: step; margin-top: 12px; }
+  .step {
+    display: grid; grid-template-columns: 52px 1fr; gap: 22px;
+    padding: 22px 0; border-top: 1px solid var(--line);
+  }
+  .step:first-child { border-top: none; }
+  .step .num {
+    counter-increment: step;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 15px; font-weight: 600; color: var(--blueprint);
+  }
+  .step .num::before { content: counter(step, decimal-leading-zero); }
+  .step h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+  .step p { margin: 0; font-size: 16px; color: var(--ink-soft); }
+  .step .who {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--blueprint); margin-top: 8px;
+  }
+
+  /* ---------- Code / verbatim snippet ---------- */
+  .snippet {
+    background: var(--code-bg); color: var(--code-ink);
+    border-radius: 12px; padding: 20px 22px;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 13.5px; line-height: 1.7;
+    overflow-x: auto; margin: 22px 0; box-shadow: var(--shadow);
+  }
+  .snippet .c { color: #7FA6A2; }  /* comment */
+  .snippet .k { color: #F1C88A; }  /* key/label */
+
+  /* ---------- Name + description rows ---------- */
+  .rows { margin-top: 10px; }
+  .row {
+    display: grid; grid-template-columns: 190px 1fr; gap: 18px;
+    padding: 14px 0; border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .row:first-child { border-top: none; }
+  .row-name {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 14px; font-weight: 600; color: var(--blueprint-deep);
+  }
+  .row-desc { font-size: 15.5px; color: var(--ink-soft); }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; gap: 4px; } }
+
+  /* ---------- Callout (max one per section) ---------- */
+  .callout {
+    background: #FBF7EE; border: 1px solid #ECDFC4;
+    border-radius: 12px; padding: 22px 24px; margin: 26px 0 0;
+  }
+  .callout .tag {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent-a); margin: 0 0 8px;
+  }
+  .callout p { margin: 0; font-size: 16px; }
+
+  /* ---------- Footer close ---------- */
+  footer { padding: 50px 0 80px; text-align: center; color: var(--ink-soft); }
+  footer .mark {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--blueprint);
+  }
+  footer p { margin: 14px 0 0; font-size: 16px; }
+
+  /* ---------- Motion (respects reduced-motion) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    section, header.mast > *, .thesis { animation: rise .6s ease both; }
+    section:nth-child(2){animation-delay:.04s}
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="mast">
+    <p class="eyebrow">Cheval Wellness · TAP Business Academy 2026</p>
+    <h1>A real <em>class</em> so Angela finishes what she already bought.</h1>
+    <p class="standfirst">Twelve weeks. A bell schedule. Homework that only counts if it is done on Cheval. Clinic #2 stays gated until she can leave the first clinic for five days.</p>
+  </header>
+
+  <div class="thesis">
+    <p class="label">The whole idea in one line</p>
+    <p>Carmen’s library is the textbook. <b>This is the school.</b> Angela is stalling because 47 unwatched lessons are not a class. Give her a calendar, a Friday deadline, and a walk-away exam, or the money she spent on TAP stays a tab she never opens.</p>
+  </div>
+
+  <section>
+    <p class="kicker">Why this exists</p>
+    <h2>She does not need more content</h2>
+    <p class="lead-in">On September 14, 2026, Angela’s TAP library showed <strong>0 of 47 lessons completed.</strong></p>
+    <p>The Advanced Practice Business Academy is a six-month hybrid for cash-based wellness clinics. Carmen Stansberry and her mentors already built the model Cheval is trying to grow into: packages instead of visits, paid intake instead of free advice, memberships instead of constant new-patient hunting. Angela bought the right thing.</p>
+    <p>What she did not buy, and what Kajabi will not invent for her, is a semester. A library lets a busy owner tell herself she will get to it. A class has a Monday, a Friday, and a person who asks for the homework.</p>
+    <div class="callout">
+      <p class="tag">The rule you already wrote</p>
+      <p>A second clinic built on a first clinic she cannot leave is just a bigger job. Three walk-away items must score 5 before Clinic #2 is even a conversation. This school is how those numbers move.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">The destination</p>
+    <h2>Leave for five days. The clinic still runs.</h2>
+    <p class="lead-in">By week 12 Angela can <strong>be unreachable for five days</strong> and Cheval still answers, holds price, books the right patient, and delivers the package.</p>
+    <p>That is the exam. Not “feel more confident.” Not “watch TAP.” Not a lease on a second suite.</p>
+    <div class="cards">
+      <div class="card a">
+        <div class="card-head">
+          <span class="card-chip">Exam</span>
+          <span class="card-name">Walk-away</span>
+          <span class="card-role">The test</span>
+        </div>
+        <p>Phones, pricing, money, leads, Natalie’s posts, billing, and the five-day leave. Score 1 to 5. Three items at 5 unlocks Clinic #2 talk. Nothing else does.</p>
+        <p class="job"><b>When you use it:</b> Week 1 baseline, then every Friday a number moves.</p>
+      </div>
+      <div class="card b">
+        <div class="card-head">
+          <span class="card-chip">Binder</span>
+          <span class="card-name">The Cheval stack</span>
+          <span class="card-role">The artifact</span>
+        </div>
+        <p>Discovery offer, three-tier package, consult script, clinical roadmap, membership one-pager. Named owners. Amanda can quote it. Mary can start it.</p>
+        <p class="job"><b>When you use it:</b> built across weeks 4 through 11, graded in week 12.</p>
+      </div>
+      <div class="card c">
+        <div class="card-head">
+          <span class="card-chip">Gate</span>
+          <span class="card-name">Clinic #2</span>
+          <span class="card-role">Not class</span>
+        </div>
+        <p>February 2027 is a lease window, not a dare. This course does not design the second location. It makes the first one copyable.</p>
+        <p class="job"><b>When you use it:</b> only after the week 12 exam, and only if three walk-away items are 5.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">Three rooms</p>
+    <h2>Textbook, lab, and shop floor</h2>
+    <p class="lead-in">Treat TAP like school, not like Netflix. <strong>Watch in the library. Think on the live call. Do it at Cheval.</strong></p>
+    <div class="rows">
+      <div class="row"><span class="row-name">Textbook</span><span class="row-desc">Kajabi course “The Advanced Practice Business Academy - 2026.” About 28 of the 47 lessons are assigned. The rest is reference.</span></div>
+      <div class="row"><span class="row-name">Lab</span><span class="row-desc">TAP live coaching. Carmen’s 2nd Wednesday at 7pm ET is required. One other TAP call per month. Replay within 48 hours if she misses live.</span></div>
+      <div class="row"><span class="row-name">Shop floor</span><span class="row-desc">Cheval. Mary on phones, Amanda on price, Natalie on posts. Homework that is not visible in the clinic did not happen.</span></div>
+      <div class="row"><span class="row-name">Dean</span><span class="row-desc">Joey. Twenty minutes a week. She brings the artifact, not a vibe. He does not watch TAP for her.</span></div>
+    </div>
+    <div class="analogy">A working clinic is the lab bench. TAP is the manual on the wall. If the manual never leaves the office, the bench does not change.</div>
+  </section>
+
+  <section>
+    <p class="kicker">Bell schedule</p>
+    <h2>The week, every week</h2>
+    <p class="lead-in">Protect this like a class she <strong>already paid for.</strong> If Friday is missed, repeat the week. Do not stack four lessons on a Sunday and call it caught up.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Monday 7:00 to 8:00am, or Sunday night</h3>
+          <p>Watch this week’s TAP lessons in the Kajabi app. Notes go in the Cheval binder. No laundry, no portal, no “I’ll finish at lunch.”</p>
+          <span class="who">Angela · 60 to 90 min</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Monday by 9:00am</h3>
+          <p>If a TAP live is this week, submit the Coaching Call Discussion Form. Bring a Cheval problem, not a vague “how do I grow.”</p>
+          <span class="who">Angela · 10 min</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>TAP live, on their calendar</h3>
+          <p>Carmen every month. One lab call: Jackie for systems, Lizzie for marketing, Margot / Susan / Heidi for clinical-business. Replay in 48 hours counts. Skipping both does not.</p>
+          <span class="who">Angela · 60 min</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Wednesday or Thursday, 20 minutes</h3>
+          <p>Joey check-in. Walk-away number, this week’s artifact, one question for Carmen, next Friday restated out loud. No clinic firefighting in this slot.</p>
+          <span class="who">Angela + Joey</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <div>
+          <h3>Friday 4:00pm, hard stop</h3>
+          <p>Text Joey: DONE plus a photo of the artifact, or STUCK plus the one blocker. If a walk-away system moved, send the new score.</p>
+          <span class="who">Angela · the week either happened or it did not</span>
+        </div>
+      </div>
+    </div>
+    <div class="snippet">
+<span class="c"># TAP live, Eastern time (Angela is in Florida)</span><br>
+<span class="k">1st Tue 8:00pm</span>  Margot Walker · clinical + business<br>
+<span class="k">2nd Mon 3:00pm</span>  Jackie Machado · tech + automations<br>
+<span class="k">2nd Wed 7:00pm</span>  Carmen Stansberry · required<br>
+<span class="k">3rd Tue 2:00pm</span>  Susan Federico · clinical + business<br>
+<span class="k">4th Tue 7:00pm</span>  Lizzie Spier · marketing systems<br>
+<span class="k">4th Thu 1:00pm</span>  Heidi Hermel · clinical + business
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">Twelve weeks</p>
+    <h2>What she watches. What she ships.</h2>
+    <p class="lead-in">Six modules. One Cheval artifact per week. <strong>Watching without shipping is skipping class.</strong></p>
+
+    <h3 style="font-size:18px;margin:28px 0 10px;">Module 1 · Weeks 1-2 · Owner to operator</h3>
+    <p>TAP: orientation, Profitable Modern Practice, Start Smart, Mini Business Plan, “Your Current Model is Keeping You Stuck,” niche sharpen only. Challenge: 30-second elevator pitch (the one already sitting in TAP, unused).</p>
+    <p>Ship: Walk-away card scored in ink. Cheval pitch said out loud. One-page mini plan for the clinic that exists, not the one she wants. Three owner-dependent loops named with a person who should own each.</p>
+
+    <h3 style="font-size:18px;margin:28px 0 10px;">Module 2 · Weeks 3-4 · Commitment, not visits</h3>
+    <p>TAP: Patient Commitment Formula, high-retention package framework, customer experience, client journey, intake tools, Intake Conversion System intro.</p>
+    <p>Ship: Cheval rewritten as a 90-day commitment, not a visit count. Journey map with Mary / Amanda / clinician on it. Discovery / intake offer with a price.</p>
+
+    <h3 style="font-size:18px;margin:28px 0 10px;">Module 3 · Weeks 5-7 · Packages that sell</h3>
+    <p>TAP: Package Building Blueprint, all five modules. One real package-feedback recording. Menu of services workshop. Susan Federico’s live consult audio.</p>
+    <p>Ship: Three-tier Cheval stack, priced. Amanda quotes it for seven days with zero Angela overrides. Consult script and one-pager in the room, not in a drive Angela owns.</p>
+
+    <h3 style="font-size:18px;margin:28px 0 10px;">Module 4 · Weeks 8-9 · Sell without Angela in the room</h3>
+    <p>TAP: Selling with integrity, premium-package psychology, clinical roadmap, Intake Conversion System modules 2 and 3.</p>
+    <p>Ship: Clinical roadmap for the core package. A close attempted by someone other than Angela, live or recorded. Discovery offer in the first-call script.</p>
+
+    <h3 style="font-size:18px;margin:28px 0 10px;">Module 5 · Weeks 10-11 · Keep them</h3>
+    <p>TAP: From Packages to Partnerships, all five modules. Optional marketing lessons only if Natalie still cannot post without approval.</p>
+    <p>Ship: One membership model chosen. One-pager. Five current patients offered it. Yes / no / objection log.</p>
+
+    <h3 style="font-size:18px;margin:28px 0 10px;">Module 6 · Week 12 · Walk-away exam</h3>
+    <p>TAP: automations masterclass only where follow-up currently dies when Angela is gone. HR docs only if the five-day roster needs them.</p>
+    <p>Ship: Coverage roster. Dated walk-away score on all seven items. Written GO, PAUSE, or NO-GO on Clinic #2. If three items are not 5, the answer is PAUSE and the gaps are the next semester, not a lease.</p>
+  </section>
+
+  <section>
+    <p class="kicker">Load and cuts</p>
+    <h2>Four to five hours. Then stop.</h2>
+    <p class="lead-in">A clinic owner will not finish a six-month buffet. <strong>This class assigns 28 lessons, not 47.</strong></p>
+    <p>Left on the shelf on purpose: TAP clinical program suites (peri, PCOS, gut, thyroid, hair, acne, men’s health, metabolic reset) unless a Cheval package actually needs one. The Social Script membership. Niche hunting. A new brand, a new site, a new EHR. Clinic #2 design work.</p>
+    <p>July Goals Challenge in TAP is stale. Skip it. The elevator pitch challenge is live. That one she does in week 1.</p>
+    <div class="callout">
+      <p class="tag">If a week blows up</p>
+      <p>Repeat the week. Do not “make it up.” The walk-away exam does not care that she watched two extra videos. It cares that Amanda can hold the price when Angela is in surgery.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">Start this week</p>
+    <h2>Pick the Monday. Protect the Friday.</h2>
+    <p class="lead-in">Recommended Week 1: <strong>Monday, September 21, 2026.</strong> Twelve weeks lands the exam in mid-December, with the February 2027 lease window still ahead and still gated.</p>
+    <p>Joey and Angela lock three things before class starts: the Monday, the 20-minute check-in slot, and where the Cheval binder lives (one folder, team can open it). Then Angela scores the walk-away card in ink so week 12 has a before.</p>
+    <div class="snippet">
+<span class="c"># Week 1, due Friday 4:00pm</span><br>
+<span class="k">Watch:</span> Orientation, live-coaching access, best practices, Profitable Modern Practice, Start Smart<br>
+<span class="k">Do:</span> Score the walk-away card. Write the 30-second Cheval pitch. Say it to Joey.<br>
+<span class="k">Post:</span> TAP elevator-pitch challenge<br>
+<span class="k">Text Joey:</span> photo of the scored card + the pitch
+    </div>
+  </section>
+
+  <footer>
+    <p class="mark">Class is in session</p>
+    <p>The library will still be there in June. The walk-away score will not move by itself.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
