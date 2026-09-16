@@ -505,10 +505,13 @@
     if (scoreLine.length) lines.push('Walk-away (' + fives(state) + ' at 5): ' + scoreLine.join(', '));
     if (ws.note) lines.push(ws.note);
     var text = lines.join('\n');
+    function fallback() { window.prompt('Copy Friday text', text); }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () { toast('Friday text copied. Paste it to Joey.'); });
+      navigator.clipboard.writeText(text).then(function () {
+        toast('Friday text copied. Paste it to Joey.');
+      }).catch(fallback);
     } else {
-      window.prompt('Copy Friday text', text);
+      fallback();
     }
   }
 
