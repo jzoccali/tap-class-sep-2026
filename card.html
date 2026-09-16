@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cheval School">
+<meta name="theme-color" content="#F6F4EF">
+<title>Cheval School — 12-week tracker</title>
+<style>
+  :root {
+    --paper: #F6F4EF;
+    --panel: #FFFFFF;
+    --ink: #1B2A30;
+    --ink-soft: #45585F;
+    --line: #DCD8CF;
+    --blueprint: #2C5D69;
+    --blueprint-deep: #1E4650;
+    --amber: #C6852E;
+    --rust: #B5562E;
+    --shadow: 0 1px 2px rgba(27,42,48,.06), 0 8px 28px rgba(27,42,48,.07);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 22px 16px 80px; }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+
+  header { padding: 18px 0 22px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--blueprint); margin: 0 0 14px;
+  }
+  h1 { font-size: clamp(28px, 7vw, 40px); line-height: 1.08; margin: 0 0 12px; font-weight: 600; letter-spacing: -.012em; }
+  h1 em { font-style: italic; color: var(--rust); }
+  .lede { margin: 0; color: var(--ink-soft); font-size: 17px; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+  }
+  .chip {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: .04em;
+    border: 1px solid var(--line); background: var(--panel);
+    padding: 6px 10px; border-radius: 8px;
+  }
+  .chip.now { background: var(--blueprint-deep); color: #EAF1F0; border-color: var(--blueprint-deep); }
+
+  .slot {
+    margin-top: 16px;
+    display: grid; gap: 6px;
+  }
+  .slot label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 12px;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  button {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    color: #EAF1F0;
+    background: var(--blueprint-deep);
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+  button.ghost {
+    background: var(--panel);
+    color: var(--blueprint-deep);
+    border: 1px solid var(--line);
+  }
+  button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .saved { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink-soft); align-self: center; }
+
+  section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 22px; margin: 0 0 6px; font-weight: 600; }
+  .kicker {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--amber); margin: 0 0 14px;
+  }
+  .rule { margin: 0 0 16px; color: var(--ink-soft); font-size: 15.5px; }
+  .ban {
+    background: var(--blueprint-deep); color: #EAF1F0;
+    border-radius: 12px; padding: 14px 16px; font-size: 15.5px;
+  }
+  .ban b { color: #F1C88A; }
+
+  .cols {
+    display: flex; gap: 6px; overflow-x: auto; margin: 14px 0 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cols button {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    background: var(--panel);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .cols button[aria-pressed="true"] {
+    background: var(--blueprint-deep);
+    color: #EAF1F0;
+    border-color: var(--blueprint-deep);
+  }
+
+  .sys { padding: 12px 0; border-top: 1px solid var(--line); }
+  .sys:first-of-type { border-top: 0; }
+  .sys-name { font-size: 16px; margin: 0 0 8px; }
+  .nums { display: flex; gap: 6px; }
+  .nums button {
+    width: 44px; height: 44px; padding: 0;
+    background: var(--panel);
+    color: var(--blueprint-deep);
+    border: 1.6px solid var(--blueprint);
+    border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+  }
+  .nums button[aria-pressed="true"] {
+    background: var(--blueprint-deep);
+    color: #fff;
+    border-color: var(--blueprint-deep);
+  }
+
+  .week {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 16px 12px;
+    margin: 0 0 12px;
+    box-shadow: var(--shadow);
+  }
+  .week.now { border-color: var(--blueprint); box-shadow: 0 0 0 1px var(--blueprint), var(--shadow); }
+  .week-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .week h3 { margin: 0; font-size: 18px; }
+  .when { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink-soft); }
+  .week .ship { margin: 0 0 12px; color: var(--ink-soft); font-size: 15px; }
+  .item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 8px 0;
+  }
+  .item input { margin-top: 3px; width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--blueprint-deep); }
+  .item span { font-size: 16px; }
+  details { margin-top: 8px; }
+  summary {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--blueprint); cursor: pointer; padding: 8px 0;
+  }
+  .repeat { margin-top: 8px; color: var(--rust); font-size: 14.5px; }
+
+  footer { padding: 28px 0 10px; color: var(--ink-soft); font-size: 14.5px; }
+  footer a { color: var(--blueprint); }
+  .toast {
+    position: fixed; left: 16px; right: 16px; bottom: 16px;
+    background: var(--blueprint-deep); color: #EAF1F0;
+    border-radius: 10px; padding: 12px 14px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    text-align: center;
+    display: none;
+  }
+
+  @media print {
+    button, .actions, .toast, details summary { display: none !important; }
+    details { display: block; }
+    details > *:not(summary) { display: block !important; }
+    .week { break-inside: avoid; box-shadow: none; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Cheval School · Angela Mineo</p>
+    <h1>Friday 4pm is the <em>bell</em>.</h1>
+    <p class="lede">Fill this on your phone. Miss Friday, repeat the week. Do not stack.</p>
+    <div class="meta" id="meta"></div>
+    <div class="slot">
+      <label for="checkin">Joey 20-min slot</label>
+      <input id="checkin" type="text" placeholder="Day and time — still unnamed" autocomplete="off">
+    </div>
+    <div class="actions">
+      <button type="button" id="copy">Copy Friday text</button>
+      <button type="button" class="ghost" id="school">Open the school</button>
+      <span class="saved" id="saved"></span>
+    </div>
+  </header>
+
+  <section>
+    <p class="kicker">Walk-away</p>
+    <h2>Can I leave for 5 days?</h2>
+    <p class="rule">1 = breaks without you. 5 = runs without you. Score in week 1, then only when a system actually moved. Tap a number again to clear it.</p>
+    <div class="cols" id="scoreCols" role="tablist" aria-label="Score week"></div>
+    <div id="scoreRows"></div>
+    <p class="ban" id="gate"></p>
+  </section>
+
+  <section>
+    <p class="kicker">Twelve weeks</p>
+    <h2>What ships each Friday</h2>
+    <div id="weeks"></div>
+  </section>
+
+  <footer>
+    <p>Scores live on this phone. They are not in Joey’s inbox until you text Friday. <a href="./">School page</a> · <a href="./tracker.html">Print version</a></p>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var KEY = 'cheval-school-card-v1';
+  var COLS = ['w1', 'w4', 'w7', 'w9', 'w11', 'w12'];
+  var COL_LABEL = { w1: 'W1', w4: 'W4', w7: 'W7', w9: 'W9', w11: 'W11', w12: 'W12' };
+  var SYSTEMS = [
+    ['phones', 'Phones answered without you (Mary + scripts)'],
+    ['pricing', 'Pricing held (Amanda enforces, no freestyle)'],
+    ['money', 'Money visible remotely'],
+    ['leads', 'Leads tracked end-to-end'],
+    ['natalie', 'Natalie posts without you approving every post'],
+    ['billing', 'Healthy / billing runs without you in the rabbit hole'],
+    ['five', 'You can be unreachable 5 days']
+  ];
+  var STANDING = [
+    ['tap', 'TAP lessons watched (Kajabi, 60–90 min Mon 7am or Sunday night)'],
+    ['form', 'Discussion form submitted if a TAP live is this week'],
+    ['carmen', 'Carmen live or 48-hour replay (required each month)'],
+    ['lab', 'One other TAP lab call this month (Jackie / Lizzie / Margot / Susan / Heidi)'],
+    ['joey', 'Joey 20 min — artifact on screen, not a feeling'],
+    ['friday', 'Friday 4pm text: DONE + photo, or STUCK + blocker']
+  ];
+  var WEEKS = [
+    { id: 'w1', n: 1, title: 'Orientation', start: '2026-09-14', due: '2026-09-18',
+      ship: 'Walk-away scored. 30-second Cheval pitch said out loud. Posted in the TAP elevator-pitch challenge.',
+      items: [
+        ['watched', 'TAP lessons watched'],
+        ['scored', 'Walk-away scored'],
+        ['pitch', '30-sec pitch said out loud'],
+        ['challenge', 'Posted in TAP elevator-pitch challenge']
+      ]},
+    { id: 'w2', n: 2, title: 'Stuck model', start: '2026-09-21', due: '2026-09-25',
+      ship: 'Mini plan for the clinic that exists. Three owner-dependent loops named with owners.',
+      items: [
+        ['plan', 'Mini plan written'],
+        ['loops', 'Three loops named with owners']
+      ]},
+    { id: 'w3', n: 3, title: 'Commitment', start: '2026-09-28', due: '2026-10-02',
+      ship: 'Cheval rewritten as a 90-day yes, not a visit count.',
+      items: [['rewrite', 'Cheval rewritten as 90-day yes, not visit count']]},
+    { id: 'w4', n: 4, title: 'Journey', start: '2026-10-05', due: '2026-10-09',
+      ship: 'Map with names. Discovery offer with a price.',
+      items: [
+        ['map', 'Map with names'],
+        ['offer', 'Discovery offer + price']
+      ]},
+    { id: 'w5', n: 5, title: 'Offer anatomy', start: '2026-10-12', due: '2026-10-16',
+      ship: 'Ugly three-tier draft. Complete, not pretty.',
+      items: [['draft', 'Ugly three-tier draft']]},
+    { id: 'w6', n: 6, title: 'Price', start: '2026-10-19', due: '2026-10-23',
+      ship: 'Numbers on paper. Amanda has it. Override log at zero.',
+      items: [
+        ['numbers', 'Numbers on paper'],
+        ['amanda', 'Amanda has it'],
+        ['override', 'Override log at zero']
+      ]},
+    { id: 'w7', n: 7, title: 'Consult to close', start: '2026-10-26', due: '2026-10-30',
+      ship: 'Script in the room. Amanda’s hold-price week reviewed.',
+      items: [
+        ['script', 'Script in the room'],
+        ['hold', 'Amanda’s hold-price week reviewed']
+      ]},
+    { id: 'w8', n: 8, title: 'Integrity selling', start: '2026-11-02', due: '2026-11-06',
+      ship: 'Clinical roadmap. Role-play notes.',
+      items: [
+        ['roadmap', 'Clinical roadmap'],
+        ['roleplay', 'Role-play notes']
+      ]},
+    { id: 'w9', n: 9, title: 'Non-Angela close', start: '2026-11-09', due: '2026-11-13',
+      ship: 'Discovery in the first-call script. Close attempt by someone else.',
+      items: [
+        ['discovery', 'Discovery in first-call script'],
+        ['close', 'Close attempt by someone else']
+      ]},
+    { id: 'w10', n: 10, title: 'Membership model', start: '2026-11-16', due: '2026-11-20',
+      ship: 'One model chosen. Why the other three lost.',
+      items: [
+        ['model', 'One model chosen'],
+        ['why', 'Why the other three lost']
+      ]},
+    { id: 'w11', n: 11, title: 'Five offers', start: '2026-11-23', due: '2026-11-27',
+      ship: 'Thanksgiving week. Friday Nov 27 still ships. One-pager. Five patients. Yes / no / objection log.',
+      items: [
+        ['onepager', 'One-pager'],
+        ['five', 'Five patients offered'],
+        ['log', 'Yes / no / objection log']
+      ]},
+    { id: 'w12', n: 12, title: 'Exam', start: '2026-11-30', due: '2026-12-04',
+      ship: '5-day roster. Dated walk-away. GO / PAUSE / NO-GO on Clinic #2.',
+      items: [
+        ['roster', '5-day roster'],
+        ['dated', 'Dated walk-away'],
+        ['verdict', 'GO / PAUSE / NO-GO on Clinic #2']
+      ]}
+  ];
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function save(state) {
+    state.savedAt = new Date().toISOString();
+    localStorage.setItem(KEY, JSON.stringify(state));
+    var el = document.getElementById('saved');
+    el.textContent = 'Saved on this phone';
+  }
+  function todayISO() {
+    var d = new Date();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+  function currentWeek() {
+    var t = todayISO();
+    var i, w;
+    for (i = WEEKS.length - 1; i >= 0; i--) {
+      w = WEEKS[i];
+      if (t >= w.start) return w;
+    }
+    return WEEKS[0];
+  }
+  function fmt(iso) {
+    var p = iso.split('-');
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+  function latestScores(state) {
+    var out = {};
+    SYSTEMS.forEach(function (s) {
+      var id = s[0], val = null, c, v;
+      for (c = 0; c < COLS.length; c++) {
+        v = state.scores && state.scores[id] && state.scores[id][COLS[c]];
+        if (v) val = v;
+      }
+      if (val) out[id] = val;
+    });
+    return out;
+  }
+  function fives(state) {
+    var latest = latestScores(state), n = 0, k;
+    for (k in latest) if (latest[k] === 5) n++;
+    return n;
+  }
+
+  var state = load();
+  if (!state.scores) state.scores = {};
+  if (!state.weeks) state.weeks = {};
+  if (!state.checkin) state.checkin = '';
+  var activeCol = 'w1';
+  var now = currentWeek();
+
+  function toast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(function () { t.style.display = 'none'; }, 2200);
+  }
+
+  function renderMeta() {
+    document.getElementById('meta').innerHTML =
+      '<span class="chip now">This week · W' + now.n + ' ' + now.title + '</span>' +
+      '<span class="chip">Due Fri ' + fmt(now.due) + '</span>' +
+      '<span class="chip">Exam Fri Dec 4</span>';
+  }
+
+  function renderScores() {
+    var cols = document.getElementById('scoreCols');
+    cols.innerHTML = COLS.map(function (c) {
+      return '<button type="button" data-col="' + c + '" aria-pressed="' + (c === activeCol) + '">' + COL_LABEL[c] + '</button>';
+    }).join('');
+    cols.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        activeCol = b.getAttribute('data-col');
+        renderScores();
+      });
+    });
+    var rows = document.getElementById('scoreRows');
+    rows.innerHTML = SYSTEMS.map(function (s) {
+      var id = s[0], label = s[1];
+      var val = state.scores[id] && state.scores[id][activeCol];
+      var btns = [1,2,3,4,5].map(function (n) {
+        return '<button type="button" data-sys="' + id + '" data-n="' + n + '" aria-pressed="' + (val === n) + '">' + n + '</button>';
+      }).join('');
+      return '<div class="sys"><p class="sys-name">' + label + '</p><div class="nums">' + btns + '</div></div>';
+    }).join('');
+    rows.querySelectorAll('button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-sys');
+        var n = Number(b.getAttribute('data-n'));
+        if (!state.scores[id]) state.scores[id] = {};
+        if (state.scores[id][activeCol] === n) delete state.scores[id][activeCol];
+        else state.scores[id][activeCol] = n;
+        save(state);
+        renderScores();
+        renderGate();
+      });
+    });
+    renderGate();
+  }
+
+  function renderGate() {
+    var n = fives(state);
+    var el = document.getElementById('gate');
+    if (n >= 3) {
+      el.innerHTML = '<b>' + n + ' of 7 at 5.</b> Clinic #2 is allowed as a conversation. Still not a lease.';
+    } else {
+      el.innerHTML = '<b>' + n + ' of 7 at 5.</b> Clinic #2 talk is banned until three items are 5.';
+    }
+  }
+
+  function weekState(id) {
+    if (!state.weeks[id]) state.weeks[id] = { items: {}, standing: {}, repeat: false, note: '' };
+    return state.weeks[id];
+  }
+
+  function renderWeeks() {
+    var root = document.getElementById('weeks');
+    root.innerHTML = WEEKS.map(function (w) {
+      var ws = weekState(w.id);
+      var isNow = w.id === now.id;
+      var items = w.items.map(function (it) {
+        var on = ws.items[it[0]] ? ' checked' : '';
+        return '<label class="item"><input type="checkbox" data-week="' + w.id + '" data-kind="items" data-key="' + it[0] + '"' + on + '><span>' + it[1] + '</span></label>';
+      }).join('');
+      var standing = STANDING.map(function (it) {
+        var on = ws.standing[it[0]] ? ' checked' : '';
+        return '<label class="item"><input type="checkbox" data-week="' + w.id + '" data-kind="standing" data-key="' + it[0] + '"' + on + '><span>' + it[1] + '</span></label>';
+      }).join('');
+      var open = isNow ? ' open' : '';
+      var repeatOn = ws.repeat ? ' checked' : '';
+      return '<article class="week' + (isNow ? ' now' : '') + '" id="' + w.id + '">' +
+        '<div class="week-top"><h3>Week ' + w.n + ' · ' + w.title + '</h3>' +
+        '<span class="when">' + fmt(w.start) + ' – ' + fmt(w.due) + (isNow ? ' · this week' : '') + '</span></div>' +
+        '<p class="ship">' + w.ship + '</p>' +
+        items +
+        '<details' + open + '><summary>Standing this week</summary>' + standing +
+        '<label class="item repeat"><input type="checkbox" data-week="' + w.id + '" data-kind="repeat"' + repeatOn + '><span>Repeat this week. Do not stack the next one.</span></label>' +
+        '<label class="slot"><span class="mono" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)">Friday note</span>' +
+        '<textarea data-week="' + w.id + '" data-kind="note" placeholder="DONE + what shipped, or STUCK + the one blocker">' + (ws.note || '').replace(/</g, '&lt;') + '</textarea></label>' +
+        '</details></article>';
+    }).join('');
+    root.querySelectorAll('input[type="checkbox"]').forEach(function (box) {
+      box.addEventListener('change', function () {
+        var id = box.getAttribute('data-week');
+        var kind = box.getAttribute('data-kind');
+        var ws = weekState(id);
+        if (kind === 'repeat') ws.repeat = box.checked;
+        else ws[kind][box.getAttribute('data-key')] = box.checked;
+        save(state);
+      });
+    });
+    root.querySelectorAll('textarea').forEach(function (ta) {
+      ta.addEventListener('input', function () {
+        weekState(ta.getAttribute('data-week')).note = ta.value;
+        save(state);
+      });
+    });
+  }
+
+  function copyFriday() {
+    var ws = weekState(now.id);
+    var lines = [];
+    lines.push('Cheval School · Week ' + now.n + ' · ' + now.title);
+    lines.push('Due Friday ' + fmt(now.due) + ' 4pm');
+    if (ws.repeat) lines.push('REPEAT WEEK');
+    var done = now.items.filter(function (it) { return ws.items[it[0]]; }).map(function (it) { return it[1]; });
+    var miss = now.items.filter(function (it) { return !ws.items[it[0]]; }).map(function (it) { return it[1]; });
+    lines.push(miss.length ? 'STUCK' : 'DONE');
+    if (done.length) lines.push('Done: ' + done.join('; '));
+    if (miss.length) lines.push('Missing: ' + miss.join('; '));
+    var latest = latestScores(state);
+    var scoreLine = SYSTEMS.map(function (s) {
+      return latest[s[0]] ? s[0] + ' ' + latest[s[0]] : null;
+    }).filter(Boolean);
+    if (scoreLine.length) lines.push('Walk-away (' + fives(state) + ' at 5): ' + scoreLine.join(', '));
+    if (ws.note) lines.push(ws.note);
+    var text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast('Friday text copied. Paste it to Joey.'); });
+    } else {
+      window.prompt('Copy Friday text', text);
+    }
+  }
+
+  document.getElementById('checkin').value = state.checkin;
+  document.getElementById('checkin').addEventListener('input', function (e) {
+    state.checkin = e.target.value;
+    save(state);
+  });
+  document.getElementById('copy').addEventListener('click', copyFriday);
+  document.getElementById('school').addEventListener('click', function () {
+    location.href = './';
+  });
+
+  renderMeta();
+  renderScores();
+  renderWeeks();
+  if (state.savedAt) document.getElementById('saved').textContent = 'Saved on this phone';
+})();
+</script>
+</body>
+</html>
